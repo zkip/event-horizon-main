@@ -13,6 +13,17 @@ To get started with **Event Horizon**, you have multiple options to download the
 
 However, for the most up-to-date version of the game, visit the [Releases](https://github.com/PavelZinchenko/event-horizon-main/releases) page here on GitHub. This ensures you have the latest features, bug fixes, and improvements.
 
+## For Developers
+
+To run this project correctly, You can follow bellow steps.
+```bash
+chmod +x ./initProject.sh
+./initProject.sh
+```
+
+The other important thing is download [external package](https://developers.google.com/unity/archive) and place it correctly. The location of the package should correspond to the location indicated in `Packages/manifest.json` file.
+
+
 ## Reporting Bugs
 
 Your feedback is invaluable in making **Event Horizon** better. If you encounter any bugs or issues, please report them under the [Issues](https://github.com/PavelZinchenko/event-horizon-main/issues) section. Be sure to include:
