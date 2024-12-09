@@ -4,4 +4,4 @@ git rm Assets/ModulesPrivate
 
 # 同步其它的子模块
 # Synchronize other submodules
-git submodule update --init --recursive
+git submodule update --remote --init --recursive
