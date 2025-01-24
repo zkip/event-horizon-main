@@ -63,13 +63,14 @@ namespace Combat.Factory
                 rotation, offset);
             var view = ConfigureView(bulletGameObject.GetComponent<IView>(), _stats.Color);
 
-            var bullet = CreateUnit(body, view, bulletGameObject);
+            var options = new Bullet.Options { CanBeDisarmed = _ammunition.Body.CanBeDisarmed };
+
+            var bullet = CreateUnit(body, view, bulletGameObject, options);
             var collisionBehaviour = CreateCollisionBehaviour(bullet);
             bullet.Collider = ConfigureCollider(bulletGameObject.GetComponent<ICollider>(true), bullet, parent);
             bullet.CollisionBehaviour = collisionBehaviour;
             bullet.Controller = CreateController(parent, bullet, bulletSpeed, spread, rotation);
             bullet.DamageHandler = CreateDamageHandler(bullet);
-            bullet.CanBeDisarmed = _ammunition.Body.CanBeDisarmed;
             _triggerBuilder.Build(bullet, collisionBehaviour);
             _scene.AddUnit(bullet);
             bullet.UpdateView(0);
@@ -151,7 +152,7 @@ namespace Combat.Factory
             return collisionBehaviour;
         }
 
-        private Bullet CreateUnit(IBody body, IView view, GameObjectHolder gameObject)
+        private Bullet CreateUnit(IBody body, IView view, GameObjectHolder gameObject, in Bullet.Options options)
         {
             UnitClass unitClass;
             if (_ammunition.Body.HitPoints > 0)
@@ -162,7 +163,7 @@ namespace Combat.Factory
                 unitClass = UnitClass.AreaOfEffect;
 
             var unitType = new UnitType(unitClass, UnitSide.Neutral, _owner, _ammunition.Body.FriendlyFire);
-            var bullet = new Bullet(body, view, new Lifetime(_stats.GetBulletLifetime()), unitType);
+            var bullet = new Bullet(body, view, new Lifetime(_stats.GetBulletLifetime()), unitType, options);
 
             bullet.Physics = gameObject.GetComponent<PhysicsManager>();
             return bullet;
@@ -279,6 +280,9 @@ namespace Combat.Factory
                     break;
                 case BulletController_Parametric controllerParametric:
                     controller = new ParametricController(bullet, controllerParametric);
+                    break;
+                case BulletController_StickyMine stickyMine:
+                    controller = new StickyController(bullet, stickyMine.Lifetime);
                     break;
                 default:
                     Debug.LogError($"Unknown controller: {_ammunition.Controller.GetType().Name}");
@@ -412,7 +416,7 @@ namespace Combat.Factory
             public Result Create(BulletTrigger_PlaySfx trigger)
             {
                 var condition = FromTriggerCondition(trigger.Condition);
-                CreateSoundEffect(_bullet, trigger.AudioClip, condition, trigger);
+                CreateSoundEffect(_bullet, _collisionBehaviour, trigger.AudioClip, condition, trigger, trigger.OncePerCollision);
                 CreateVisualEffect(_bullet, _collisionBehaviour, condition, trigger);
                 return Result.Ok;
             }
@@ -420,7 +424,7 @@ namespace Combat.Factory
             public Result Create(BulletTrigger_SpawnStaticSfx trigger)
             {
                 var condition = FromTriggerCondition(trigger.Condition);
-                CreateSoundEffect(_bullet, trigger.AudioClip, condition, trigger);
+                CreateSoundEffect(_bullet, _collisionBehaviour, trigger.AudioClip, condition, trigger, trigger.OncePerCollision);
                 CreateStaticVisualEffect(_bullet, _collisionBehaviour, condition, trigger);
                 return Result.Ok;
             }
@@ -463,11 +467,14 @@ namespace Combat.Factory
                 return Result.Ok;
             }
 
-            private void CreateSoundEffect(Bullet bullet, AudioClipId audioClip, ConditionType condition, BulletTrigger trigger)
+            private void CreateSoundEffect(Bullet bullet, BulletCollisionBehaviour collisionBehaviour, 
+                AudioClipId audioClip, ConditionType condition, BulletTrigger trigger, bool oncePerCollision)
             {
                 if (!audioClip) return;
 
-				if (condition == ConditionType.None && !audioClip.Loop)
+                if (condition == ConditionType.OnCollide)
+                    collisionBehaviour.AddAction(new PlayHitSoundAction(_factory._services.SoundPlayer, audioClip, trigger.Cooldown, oncePerCollision));
+                else if (condition == ConditionType.None && !audioClip.Loop)
                     _factory._services.SoundPlayer.Play(audioClip);
                 else
                     AddAction(bullet, trigger, new PlaySoundAction(_factory._services.SoundPlayer, audioClip, condition).WithCooldown(trigger.Cooldown));
