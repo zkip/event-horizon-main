@@ -7,6 +7,7 @@
 /[Mm]emoryCaptures/
 /UserSettings/
 /Mods/
+/SavesDir/
 
 /Assets/GooglePlayGames*
 /Assets/GoogleMobileAds*
@@ -20,6 +21,8 @@
 /Assets/Modules/ShipModelGenerator*
 /Assets/Plugins/Android/*
 /Assets/Plugins/iOS/
+Assets/Modules/Database/Resources/Database/id
+Assets/Modules/Database/Resources/Database/id.meta
 
 **/bin/Debug/
 **/bin/Release/
@@ -46,6 +49,7 @@ steam_appid.txt
 ExportedObj/
 .consulo/
 *.csproj
+*.csproj.meta
 *.unityproj
 *.sln
 *.suo
