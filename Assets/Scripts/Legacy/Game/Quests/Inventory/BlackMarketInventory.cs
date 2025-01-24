@@ -51,9 +51,9 @@ namespace GameModel
 						_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateFuelItem(), 100 + extraGoods*50, _starId, Market.FuelRenewalTime, 5f*pricescale));
 
 						foreach(var id in _database.FactionsWithEmpty.ValidForMerchants().CanGiveTechPoints(_level).RandomUniqueElements(random.Next(2, 5 + extraGoods), random))
-							_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateResearchItem(id), random.Next(1,5), _starId, Market.TechRenewalTime, pricescale));
+							_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateResearchItem(id), random.Next(3,15 + extraGoods * 10), _starId, Market.TechRenewalTime, pricescale));
 #if !IAP_DISABLED
-    					_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateCurrencyItem(Currency.Stars), random.Next(5, 15 + 5*extraGoods), _starId, Market.StarsRenewalTime, 2f*pricescale));
+    					_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateCurrencyItem(Currency.Stars), random.Next(20, 25 + 15*extraGoods), _starId, Market.StarsRenewalTime, 2f*pricescale));
 #endif
 						foreach (var ship in ShipBuildQuery.PlayerShips(_database).Common().WithSizeClass(SizeClass.Frigate, SizeClass.Battleship).Where(IsShipFactionValid).SelectUniqueRandom(random.Next(extraGoods + 1, 5), random).All)
 							_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateMarketShipItem(new CommonShip(ship, _database), true), 1, _starId, Market.ShipRenewalTime, pricescale));
