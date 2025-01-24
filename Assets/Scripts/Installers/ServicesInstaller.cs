@@ -99,15 +99,13 @@ namespace Installers
             Container.BindInterfacesTo<EmptyAccount>().AsSingle();
 #endif
 
-#if LICENSE_OPENSOURCE
-            Container.BindInterfacesTo<PlayerPrefsStorage>().AsSingle();
-#elif UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL && !UNITY_EDITOR
             Container.BindInterfacesTo<PlayerPrefsStorage>().AsSingle();
 #elif UNITY_ANDROID && !UNITY_EDITOR
             Container.BindInterfacesTo<AndroidLocalStorage>().AsSingle();
-#elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
+#elif UNITY_STANDALONE_OSX
             Container.BindInterfacesTo<MacLocalStorage>().AsSingle();
-#elif UNITY_STANDALONE_WIN && !UNITY_EDITOR
+#elif UNITY_STANDALONE_WIN
             Container.BindInterfacesTo<WindowsLocalStorage>().AsSingle();
 #else
 			Container.BindInterfacesTo<LocalStorage>().AsSingle();
