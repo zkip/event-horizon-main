@@ -3,6 +3,8 @@ using Combat.Component.Unit;
 using Combat.Scene;
 using Combat.Unit;
 using UnityEngine.UI;
+using Services.Resources;
+using Game.Exploration;
 
 namespace Gui.Combat
 {
@@ -10,14 +12,17 @@ namespace Gui.Combat
     {
         [SerializeField] private Image Image;
         [SerializeField] private Image Background;
+        [SerializeField] private Color StarbaseColor;
         [SerializeField] private float Size = 24;
-
-        public void Open(IUnit unit, IScene scene)
+        
+        private ObjectiveInfo _objectiveInfo;
+        public void Open(IUnit unit, IScene scene, IResourceLocator resourceLocator, ObjectiveInfo objectiveInfo)
         {
             _scene = scene;
             _unit = unit;
+            _objectiveInfo = objectiveInfo;
 
-            Initialize();
+            Initialize(resourceLocator);
             Update();
             gameObject.SetActive(true);
         }
@@ -86,11 +91,53 @@ namespace Gui.Combat
             }
         }
 
-        private void Initialize()
+        private void Initialize(IResourceLocator resourceLocator)
         {
             _screenSize = RectTransform.parent.GetComponent<RectTransform>().rect.size;
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Size * 2);
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Size * 2);
+
+            switch (_objectiveInfo.Type)
+            {
+                case ObjectiveType.Container:
+                    {
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/scrap_icon");
+                    }
+                    break;
+                case ObjectiveType.Meteorite:
+                    {
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/nuclear");
+                    }
+                    break;
+                case ObjectiveType.ShipWreck:
+                    {
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/scrap_icon");
+                    }
+                    break;
+                case ObjectiveType.Minerals:
+                    {
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/nuclear");
+                    }
+                    break;
+                case ObjectiveType.MineralsRare:
+                    {
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/nuclear");
+                    }
+                    break;
+                case ObjectiveType.Outpost:
+                    {
+                        Background.color = StarbaseColor;
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/star_icon");
+                    }
+                    break;
+                case ObjectiveType.Hive:
+                    {
+                        Background.color = StarbaseColor;
+                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/star_icon");
+                    }
+                    break;
+                default: break;
+            }
         }
 
         private Vector2 _screenSize;
