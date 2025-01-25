@@ -91,7 +91,7 @@ namespace Services.Storage
                     data[i] = (byte)(data[i] ^ (byte)random(ref w, ref z));
                 }
 
-                data.Add(checksumm);
+                data.Add((byte)(checksumm ^ (byte)random(ref w, ref z)));
 
                 _currentMod = gameData.ModId;
                 _mainFileLoaded = false;
