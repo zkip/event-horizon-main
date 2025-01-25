@@ -9337,6 +9337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Image: {fileID: 469492758}
   Background: {fileID: 1695398681}
+  StarbaseColor: {r: 0.5019608, g: 1, b: 1, a: 1}
   Size: 24
 --- !u!114 &1695398681
 MonoBehaviour:
