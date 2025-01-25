@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +13,12 @@ namespace GameDatabase
 {
     public partial class Database
     {
+        private static IDatabase? current;
+        public static IDatabase? getCurrent()
+        {
+            return current;
+        }
+
         private IDataStorage _storage;
         private DatabaseContent _content;
         private readonly IDataStorage _defaultStorage = new ResourceDatabaseStorage(DefaultPath);
@@ -152,6 +160,7 @@ namespace GameDatabase
             Loader.Load(this, _content);
             
             _storage = storage;
+            current = this;
             DatabaseLoaded?.Invoke();
         }
 

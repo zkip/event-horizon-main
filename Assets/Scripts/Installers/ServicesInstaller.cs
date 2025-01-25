@@ -39,7 +39,7 @@ namespace Installers
             Container.Bind<IResourceLocator>().To<ResourceLocator>().FromInstance(_resourceLocator);
 
             Container.BindInterfacesTo<GameDatabase.Database>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<Gui.DebugConsole.DebugConsoleLogger>().AsSingle();
+            Container.BindInterfacesTo<Gui.DebugConsole.DebugConsoleLoggerFix>().AsSingle();
 
 			Container.Bind<IMessengerContext>().To<MessengerContext>().AsSingle();
 
