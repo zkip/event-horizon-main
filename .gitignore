@@ -36,6 +36,7 @@ thumbs.db.meta
 /Assets/Plugins/Android/*.jar.meta
 
 license.keystore
+*.keystore
 steam_appid.txt
 .vsconfig
 
