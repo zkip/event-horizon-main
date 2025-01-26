@@ -52,19 +52,19 @@ namespace GameServices.Economy
                 {
                     var bossFaction = ship.Model.Faction;
 
-                    yield return CommonProduct.Create(_factory.CreateResearchItem(bossFaction), random.Next(1, 2));
+                    yield return CommonProduct.Create(_factory.CreateResearchItem(bossFaction), random.Next(3, 6));
 
                     foreach (var item in RandomComponents(moduleLevel + 35, random.Next(1, 2), bossFaction, random, false))
                         yield return CommonProduct.Create(item);
 
                     if (ship.ExtraThreatLevel >= DifficultyClass.Class2)
                     {
-                        yield return Price.Premium(4).GetProduct(_factory);
+                        yield return Price.Premium(8).GetProduct(_factory);
                         foreach (var item in RandomComponents(moduleLevel + 75, random.Next(1, 3), bossFaction, random, false))
                             yield return CommonProduct.Create(item);
                     } else
                     {
-                        yield return Price.Premium(2).GetProduct(_factory);
+                        yield return Price.Premium(16).GetProduct(_factory);
                     }
                 }
                 else
@@ -91,12 +91,12 @@ namespace GameServices.Economy
 
         public IEnumerable<IProduct> GetSocialShareReward()
         {
-            yield return Price.Premium(10).GetProduct(_factory);
+            yield return Price.Premium(100).GetProduct(_factory);
         }
 
         public IEnumerable<IProduct> GetAdReward()
         {
-            yield return Price.Premium(1).GetProduct(_factory);
+            yield return Price.Premium(100).GetProduct(_factory);
         }
 
         public IEnumerable<IProduct> GetHolidayLoot(System.Random random)
@@ -175,7 +175,7 @@ namespace GameServices.Economy
                     yield return CommonProduct.Create(_factory.CreateBlueprintItem(tech));
             }
 
-            yield return Price.Premium(1 + random.Next(2 + quality + level) / 100).GetProduct(_factory);
+            yield return Price.Premium(10 + random.Next(2 + quality + level) / 100).GetProduct(_factory);
         }
 
         public IEnumerable<IProduct> GetPlanetResources(PlanetType planetType, Faction faction, int level, int seed)
@@ -246,7 +246,7 @@ namespace GameServices.Economy
 
         public IEnumerable<IProduct> GetStarBaseSpecialReward(Region region)
         {
-            yield return CommonProduct.Create(_factory.CreateResearchItem(region.Faction), Mathf.FloorToInt(3f + region.BaseDefensePower / 100f));
+            yield return CommonProduct.Create(_factory.CreateResearchItem(region.Faction), Mathf.FloorToInt(3f + region.BaseDefensePower / 100f) + region.HomeStarLevel / 60);
 
             if (region.IsPirateBase)
             {
@@ -254,7 +254,7 @@ namespace GameServices.Economy
 
                 yield return Price.Premium(Mathf.Min(200, 5 + region.HomeStarLevel / 30)).GetProduct(_factory);
                 foreach (var faction in _database.FactionsWithEmpty.ValidForMerchants().RandomUniqueElements(4, random))
-                    yield return CommonProduct.Create(_factory.CreateResearchItem(faction), Mathf.Min(20, 1 + region.HomeStarLevel / 30));
+                    yield return CommonProduct.Create(_factory.CreateResearchItem(faction), Mathf.Min(80, 1 + region.HomeStarLevel / 60));
 
                 if (random.Percentage(30))
                 {
@@ -314,7 +314,7 @@ namespace GameServices.Economy
             foreach (var item in RandomComponents(Maths.Distance.ComponentLevel(level) + 35, random.Next(1, 3), null, random, false))
                 yield return CommonProduct.Create(item);
 
-            var quantity = 3 + random.Next(30);
+            var quantity = 25 + random.Next(30) + level / 20;
             if (quantity > 0)
                 yield return Price.Premium(quantity).GetProduct(_factory);
 
