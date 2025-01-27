@@ -5,14 +5,27 @@ using Combat.Unit;
 using UnityEngine.UI;
 using Services.Resources;
 using Game.Exploration;
+using System.Collections.Generic;
 
 namespace Gui.Combat
 {
     public class BeaconRadar : MonoBehaviour
     {
-        [SerializeField] private Image Image;
-        [SerializeField] private Image Background;
-        [SerializeField] private Color StarbaseColor;
+        public static Dictionary<ObjectiveType, string> ObjectiveIconDict = new Dictionary<ObjectiveType, string>
+        {
+            [ObjectiveType.Outpost] = "Textures/GUI/star_icon",
+            [ObjectiveType.Hive] = "Textures/Icons/icon_virus",
+            [ObjectiveType.Container] = "Textures/Icons/icon_cargo",
+            [ObjectiveType.ShipWreck] = "Textures/GUI/ship",
+            [ObjectiveType.MineralsRare] = "Textures/Artifacts/stone",
+            [ObjectiveType.Minerals] = "Textures/GUI/nuclear",
+            [ObjectiveType.Meteorite] = "Textures/GUI/meteorite",
+            // TODO: XmasBox,
+        };
+
+        [SerializeField] public Image Image;
+        [SerializeField] public Image Background;
+        [SerializeField] public Color StarbaseColor;
         [SerializeField] private float Size = 24;
         
         private ObjectiveInfo _objectiveInfo;
@@ -97,47 +110,12 @@ namespace Gui.Combat
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Size * 2);
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Size * 2);
 
-            switch (_objectiveInfo.Type)
+            Image.sprite = resourceLocator.GetSprite(ObjectiveIconDict[_objectiveInfo.Type]);
+            if (_objectiveInfo.Type == ObjectiveType.Outpost)
             {
-                case ObjectiveType.Container:
-                    {
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/scrap_icon");
-                    }
-                    break;
-                case ObjectiveType.Meteorite:
-                    {
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/nuclear");
-                    }
-                    break;
-                case ObjectiveType.ShipWreck:
-                    {
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/scrap_icon");
-                    }
-                    break;
-                case ObjectiveType.Minerals:
-                    {
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/nuclear");
-                    }
-                    break;
-                case ObjectiveType.MineralsRare:
-                    {
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/nuclear");
-                    }
-                    break;
-                case ObjectiveType.Outpost:
-                    {
-                        Background.color = StarbaseColor;
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/star_icon");
-                    }
-                    break;
-                case ObjectiveType.Hive:
-                    {
-                        Background.color = StarbaseColor;
-                        Image.sprite = resourceLocator.GetSprite("Textures/GUI/star_icon");
-                    }
-                    break;
-                default: break;
+                Background.color = StarbaseColor;
             }
+
         }
 
         private Vector2 _screenSize;
