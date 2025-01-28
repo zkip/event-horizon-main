@@ -25,8 +25,16 @@ namespace Combat.Domain
                 }
             }
 
+            long extraExp = 0;
+            if (combatModel.ExtraExperiences != null)
+            {
+                foreach (var exp in combatModel.ExtraExperiences)
+                {
+                    extraExp += exp;
+                }
+            }
             PlayerExperience = ExperienceData.Empty;
-            if (combatModel.IsExpAllowed())
+            if (combatModel.IsExpAllowed() || extraExp > 0)
             {
                 var expMultiplier = playerSkills.ExperienceMultiplier;
                 foreach (var item in combatModel.PlayerExperience)
@@ -39,8 +47,9 @@ namespace Combat.Domain
                 }
 
                 var totalExp = Experience.Sum(item => item.ExperienceAfter - item.ExperienceBefore);
-                PlayerExperience = new ExperienceData(playerSkills.Experience,
-                    GameModel.Skills.Experience.ConvertCombatExperience(totalExp, playerSkills.Experience.Level));
+                var commonExp = combatModel.IsExpAllowed() ? GameModel.Skills.Experience.ConvertCombatExperience(totalExp, playerSkills.Experience.Level) : 0;
+
+                PlayerExperience = new ExperienceData(playerSkills.Experience, commonExp + extraExp);
             }
         }
 

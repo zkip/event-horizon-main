@@ -18,6 +18,7 @@ using Model.Factories;
 using Session;
 using UnityEngine;
 using Zenject;
+using GameServices.Player;
 
 namespace Galaxy.StarContent
 {
@@ -32,6 +33,7 @@ namespace Galaxy.StarContent
         [Inject] private readonly LootGenerator _lootGenerator;
         [Inject] private readonly IDatabase _database;
         [Inject] private readonly CombatModelBuilder.Factory _combatModelBuilderFactory;
+        [Inject] private readonly PlayerSkills _playerSkills;
 
         public bool IsCompleted(int starId) { return GetCurrentLevel(starId) >= MaxLevel; }
         public int GetCurrentLevel(int starId) { return _session.CommonObjects.GetIntValue(starId); }
@@ -90,6 +92,12 @@ namespace Galaxy.StarContent
             builder.Rules = _database.GalaxySettings.ChallengeCombatRules ?? _database.CombatSettings.DefaultCombatRules;
             builder.AddSpecialReward(GetReward(starId));
 
+            if(_playerSkills.Experience.Level < level)
+            {
+                var step = GetCurrentLevel(starId);
+                builder.AddPlayerSkillLevelReward(step + 1 < MaxLevel ? 1 : 2);
+            }
+
             _startBattleTrigger.Fire(builder.Build(), result => OnCombatCompleted(starId, result));
         }
 
@@ -103,10 +111,10 @@ namespace Galaxy.StarContent
             var componentSeed = starId + step + 3456;
             if (step + 1 < MaxLevel)
             {
-                if (_lootGenerator.TryGetRandomComponent(starId + step + 3456, false, faction, ModificationQuality.P3, out var factionProduct))
+                if (_lootGenerator.TryGetRandomComponent(starId + step + 3456, true, faction, ModificationQuality.P3, out var factionProduct))
                     yield return factionProduct;
 
-                if (_lootGenerator.TryGetRandomComponent(componentSeed, false, null, ModificationQuality.P3, out var otherFactionProduct))
+                if (_lootGenerator.TryGetRandomComponent(componentSeed, true, null, ModificationQuality.P3, out var otherFactionProduct))
                     yield return otherFactionProduct;
 
                 yield return Price.Premium(10 + random.Next(1, 10)).GetProduct(_itemTypeFactory);
@@ -115,9 +123,9 @@ namespace Galaxy.StarContent
             {
                 for(var i = 0; i < 1 + level / 50; i++)
                 {
-                    if (_lootGenerator.TryGetRandomComponent(componentSeed + i, false, faction, ModificationQuality.P3, out var factionExtraProduct))
+                    if (_lootGenerator.TryGetRandomComponent(componentSeed + i, true, faction, ModificationQuality.P3, out var factionExtraProduct))
                         yield return factionExtraProduct;
-                    if (_lootGenerator.TryGetRandomComponent(componentSeed + i, false, null, ModificationQuality.P3, out var otherFactionExtraProduct))
+                    if (_lootGenerator.TryGetRandomComponent(componentSeed + i, true, null, ModificationQuality.P3, out var otherFactionExtraProduct))
                         yield return otherFactionExtraProduct;
                 }
                 yield return Price.Premium(100 + random.Next(10, 100)).GetProduct(_itemTypeFactory);

@@ -42,6 +42,7 @@ namespace Combat.Domain
 
         public IEnumerable<KeyValuePair<IShip, long>> PlayerExperience { get { return _playerExperienceData; } }
         public IEnumerable<IProduct> SpecialRewards { get; set; }
+        public IEnumerable<long> ExtraExperiences { get; set; }
 
         private void OnShipDestroyed(Component.Ship.IShip ship)
         {

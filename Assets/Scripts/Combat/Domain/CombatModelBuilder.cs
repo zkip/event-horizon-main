@@ -45,6 +45,11 @@ namespace Combat.Domain
             _specialReward.AddRange(items);
         }
 
+        public void AddPlayerSkillLevelReward(int level)
+        {
+            _extraExperiences.Add(_playerSkills.Experience.ExpForFurtherLevel(level));
+        }
+
         public ICombatModel Build(IEnumerable<IProduct> specialLoot = null)
         {
             var playerFleet = PlayerFleet ?? Model.Factories.Fleet.Empty;
@@ -58,13 +63,15 @@ namespace Combat.Domain
 			var rules = Rules.Create(StarLevel, _playerSkills.HasRescueUnit);
 
 			model.SpecialRewards = specialLoot != null ? _specialReward.Concat(specialLoot) : _specialReward;
-			model.Rules = rules;
+            model.ExtraExperiences = _extraExperiences;
+            model.Rules = rules;
 
             return model;
         }
 
         private readonly IDatabase _database;
         private readonly List<IProduct> _specialReward = new List<IProduct>();
+        private readonly List<long> _extraExperiences = new List<long>();
         private readonly ShipDestroyedSignal _shipDestroyedSignal;
         private readonly PlayerSkills _playerSkills;
 

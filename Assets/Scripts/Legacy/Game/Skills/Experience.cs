@@ -40,6 +40,17 @@ namespace GameModel.Skills
             }
         }
 
+        public long ExpForFurtherLevel(int expectedLevel)
+        {
+            long exp = 0;
+            for(var i = 0; i< expectedLevel; i++)
+            {
+                exp += LevelToExp(Level + i + 1) - LevelToExp(Level + i);
+            }
+
+            return exp;
+        }
+
         public static Experience FromLevel(int level)
         {
             return new Experience(LevelToExp(level));
