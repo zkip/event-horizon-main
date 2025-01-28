@@ -368,6 +368,19 @@ namespace GameServices.Economy
             }
         }
 
+        public bool TryGetRandomComponent(int seed, bool allowRare, Faction faction, ModificationQuality modificationQuality, out IProduct product)
+        {
+            var random = _random.CreateRandom(seed);
+            if (!ComponentInfo.TryCreateRandomComponent(_database, faction, random, allowRare, modificationQuality, out var componentInfo))
+            {
+                product = null;
+                return false;
+            }
+
+            product = CommonProduct.Create(_factory.CreateComponentItem(componentInfo));
+            return true;
+        }
+
         public bool TryGetRandomComponent(int distance, int seed, bool allowRare, out IProduct product)
         {
             var random = _random.CreateRandom(seed);
