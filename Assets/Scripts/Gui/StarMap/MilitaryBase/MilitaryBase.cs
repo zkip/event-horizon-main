@@ -93,8 +93,12 @@ namespace Gui.StarMap
         private static Price GetLevelUpPrice(IShip ship)
         {
             var size = 1 + Mathf.Max(0, (int)ship.Model.SizeClass);
-            var price = 1 + ship.Experience.Level * size / 25;
-            return Price.Premium(price);
+            var shipLevel = ship.Experience.Level;
+            var scaleLevel = shipLevel / 5;
+            var scalar = shipLevel < 100 ? 1.15 : 1.5;
+            var price = 10000 + 10000 * size * scalar * scaleLevel;
+
+            return Price.Common(price);
         }
     }
 }
