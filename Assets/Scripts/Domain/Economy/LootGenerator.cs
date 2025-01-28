@@ -207,9 +207,12 @@ namespace GameServices.Economy
         public IEnumerable<IProduct> GetContainerLoot(Faction faction, int level, int seed)
         {
             var random = new System.Random(seed);
+            var ratio = _playerSkills.PlanetaryScanner;
             var quality = Mathf.RoundToInt(_playerSkills.PlanetaryScanner * 100);
+            var additionP3Modification = quality >= 1.0 ? 1 : 0;
 
-            yield return CommonProduct.Create(_factory.CreateCurrencyItem(Currency.Credits), Maths.Distance.Credits(level)/2 + random.Next2(Maths.Distance.Credits(level) * quality / 10));
+            yield return CommonProduct.Create(_factory.CreateCurrencyItem(Currency.Credits), scaleFromSkill(random.Next(1500 + level * 150, 10000 + level * 1000)));
+            yield return Price.Premium(scaleFromSkill(random.Next(4, 20 + level / 5))).GetProduct(_factory);
 
             if (random.Percentage(scaleFromSkill(30)))
                 yield return CommonProduct.Create(CreateArtifact(CommodityType.Alloys), 20 + random.Next2(100 * quality / 100));
@@ -218,9 +221,13 @@ namespace GameServices.Economy
             if (random.Percentage(scaleFromSkill(10)))
                 yield return CommonProduct.Create(CreateArtifact(CommodityType.Artifacts), 20 + random.Next2(60 * quality / 100));
 
-            for (var i = 0; i < random.Next(quality / 50); ++i)
+            for (var i = 0; i < random.Next(2, quality / 50); ++i)
                 if (TryCreateRandomComponent(level, faction, random, true, ComponentQuality.P3, out var itemType))
                     yield return CommonProduct.Create(itemType);
+
+            for (var i = 0; i < random.Next(1, quality / 75) + additionP3Modification; ++i)
+                if (TryGetRandomComponent(seed + 77394 + i, true, null, ModificationQuality.P3, out var component))
+                    yield return component;
         }
 
         public IEnumerable<IProduct> GetShipWreckLoot(Faction faction, int level, int seed)
@@ -300,7 +307,7 @@ namespace GameServices.Economy
         {
             var random = _random.CreateRandom(seed);
 
-            yield return Price.Common(5 * Maths.Distance.Credits(level)).GetProduct(_factory);
+            yield return Price.Common(500 * Maths.Distance.Credits(level)).GetProduct(_factory);
             yield return CommonProduct.Create(_factory.CreateFuelItem(), random.Next(5,15));
 
             if (random.Next(3) == 0)
