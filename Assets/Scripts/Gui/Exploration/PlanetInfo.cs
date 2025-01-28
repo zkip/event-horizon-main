@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using GameServices.Random;
 using Services.Localization;
 using Zenject;
+using System.Collections.Generic;
+using System;
 
 namespace Gui.Exploration
 {

@@ -3,21 +3,39 @@ using Combat.Component.Unit;
 using Combat.Scene;
 using Combat.Unit;
 using UnityEngine.UI;
+using Services.Resources;
+using Game.Exploration;
+using System.Collections.Generic;
 
 namespace Gui.Combat
 {
     public class BeaconRadar : MonoBehaviour
     {
-        [SerializeField] private Image Image;
-        [SerializeField] private Image Background;
-        [SerializeField] private float Size = 24;
+        public static Dictionary<ObjectiveType, string> ObjectiveIconDict = new Dictionary<ObjectiveType, string>
+        {
+            [ObjectiveType.Outpost] = "Textures/GUI/star_icon",
+            [ObjectiveType.Hive] = "Textures/Icons/icon_virus",
+            [ObjectiveType.Container] = "Textures/Icons/icon_cargo",
+            [ObjectiveType.ShipWreck] = "Textures/GUI/ship",
+            [ObjectiveType.MineralsRare] = "Textures/Artifacts/stone",
+            [ObjectiveType.Minerals] = "Textures/GUI/nuclear",
+            [ObjectiveType.Meteorite] = "Textures/GUI/meteorite",
+            // TODO: XmasBox,
+        };
 
-        public void Open(IUnit unit, IScene scene)
+        [SerializeField] public Image Image;
+        [SerializeField] public Image Background;
+        [SerializeField] public Color StarbaseColor;
+        [SerializeField] private float Size = 24;
+        
+        private ObjectiveInfo _objectiveInfo;
+        public void Open(IUnit unit, IScene scene, IResourceLocator resourceLocator, ObjectiveInfo objectiveInfo)
         {
             _scene = scene;
             _unit = unit;
+            _objectiveInfo = objectiveInfo;
 
-            Initialize();
+            Initialize(resourceLocator);
             Update();
             gameObject.SetActive(true);
         }
@@ -86,11 +104,18 @@ namespace Gui.Combat
             }
         }
 
-        private void Initialize()
+        private void Initialize(IResourceLocator resourceLocator)
         {
             _screenSize = RectTransform.parent.GetComponent<RectTransform>().rect.size;
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Size * 2);
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Size * 2);
+
+            Image.sprite = resourceLocator.GetSprite(ObjectiveIconDict[_objectiveInfo.Type]);
+            if (_objectiveInfo.Type == ObjectiveType.Outpost)
+            {
+                Background.color = StarbaseColor;
+            }
+
         }
 
         private Vector2 _screenSize;

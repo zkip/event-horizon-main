@@ -37,7 +37,7 @@ namespace Services.Storage
                 data.AddRange(ZlibStream.CompressBuffer(gameData.Serialize().ToArray()));
 
                 var serializedData = Convert.ToBase64String(data.ToArray(), Base64FormattingOptions.None);
-                PlayerPrefs.SetString(_key, serializedData);
+                PlayerPrefs.SetString(gameData.ModId, serializedData);
                 PlayerPrefs.Save();
 
                 _currentGameId = gameData.GameId;
@@ -61,7 +61,7 @@ namespace Services.Storage
         {
             try
             {
-                var key = string.IsNullOrEmpty(mod) ? _key : _key + "." + mod;
+                var key = string.IsNullOrEmpty(mod) ? _key : mod;
                 var dataString = PlayerPrefs.GetString(key);
 
                 if (string.IsNullOrEmpty(dataString))

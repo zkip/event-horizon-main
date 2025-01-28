@@ -90,7 +90,7 @@ namespace GameModel
                 _items = new List<IProduct>();
 				_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateFuelItem(), 100 + 100*extraGoods, _starId, Market.FuelRenewalTime, 2f*pricescale));
 
-				_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateResearchItem(_faction), random.Next(1,5) + extraGoods, _starId, 0, pricescale));
+				_items.Add(_productFactory.CreateRenewableMarketProduct(_itemTypeFactory.CreateResearchItem(_faction), random.Next(3,10) + extraGoods * 5, _starId, 0, pricescale));
 				
 				var ship = ShipBuildQuery.PlayerShips(_database).
 					BelongToFaction(_faction).

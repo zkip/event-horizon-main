@@ -7,6 +7,7 @@ using Combat.Component.Unit.Classification;
 using Combat.Scene;
 using Services.Resources;
 using Zenject;
+using Game.Exploration;
 
 namespace Gui.Combat
 {
@@ -27,9 +28,9 @@ namespace Gui.Combat
             (_radars.FirstOrDefault(item => !item.gameObject.activeSelf) ?? CreateRadar()).Open(ship, _scene, _resourceLocator);
         }
 
-        public void AddBeacon(IUnit unit)
+        public void AddBeacon(IUnit unit, ObjectiveInfo objectiveInfo)
         {
-            (_beaconRadars.FirstOrDefault(item => !item.gameObject.activeSelf) ?? CreateBeaconRadar()).Open(unit, _scene);
+            (_beaconRadars.FirstOrDefault(item => !item.gameObject.activeSelf) ?? CreateBeaconRadar()).Open(unit, _scene, _resourceLocator, objectiveInfo);
         }
 
         public void RemoveBeacon(IUnit unit)
