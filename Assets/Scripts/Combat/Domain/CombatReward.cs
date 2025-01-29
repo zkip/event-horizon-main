@@ -26,13 +26,14 @@ namespace Combat.Domain
             }
 
             long extraExp = 0;
-            if (combatModel.ExtraExperiences != null)
+            if (combatModel.IsAvailableLootExtraExperiences() && combatModel.ExtraExperiences != null)
             {
                 foreach (var exp in combatModel.ExtraExperiences)
                 {
                     extraExp += exp;
                 }
             }
+
             PlayerExperience = ExperienceData.Empty;
             if (combatModel.IsExpAllowed() || extraExp > 0)
             {
@@ -59,7 +60,7 @@ namespace Combat.Domain
 
         private IEnumerable<IProduct> CreateItems(CombatModel combatModel, LootGenerator lootGenerator, Galaxy.Star currentStar)
         {
-            if (combatModel.SpecialRewards != null)
+            if (combatModel.IsAvailableLootSpecialRewards() && combatModel.SpecialRewards != null)
                 foreach (var item in combatModel.SpecialRewards)
                     yield return item;
 

@@ -51,8 +51,8 @@ namespace GameServices.Economy
                 if (ship.Model.ShipType == ShipType.Flagship)
                 {
                     var bossFaction = ship.Model.Faction;
-
-                    yield return CommonProduct.Create(_factory.CreateResearchItem(bossFaction), random.Next(3, 6));
+                    var threatLevel = (int)ship.ExtraThreatLevel;
+                    yield return CommonProduct.Create(_factory.CreateResearchItem(bossFaction), random.Next(3 + threatLevel * 1, 6 + threatLevel * 2));
 
                     foreach (var item in RandomComponents(moduleLevel + 35, random.Next(1, 2), bossFaction, random, false))
                         yield return CommonProduct.Create(item);
@@ -69,6 +69,10 @@ namespace GameServices.Economy
                 }
                 else
                 {
+                    if (random.Percentage(20))
+                    {
+                        yield return CommonProduct.Create(_factory.CreateResearchItem(faction));
+                    }
                     foreach (var item in RandomComponents(moduleLevel, random.Next(-10, 2), faction, random, false))
                         yield return CommonProduct.Create(item);
                 }
@@ -213,6 +217,7 @@ namespace GameServices.Economy
 
             yield return CommonProduct.Create(_factory.CreateCurrencyItem(Currency.Credits), scaleFromSkill(random.Next(1500 + level * 150, 10000 + level * 1000)));
             yield return Price.Premium(scaleFromSkill(random.Next(4, 20 + level / 5))).GetProduct(_factory);
+            yield return CommonProduct.Create(_factory.CreateResearchItem(faction), scaleFromSkill(random.Next(2, 5 + level / 35)));
 
             if (random.Percentage(scaleFromSkill(30)))
                 yield return CommonProduct.Create(CreateArtifact(CommodityType.Alloys), 20 + random.Next2(100 * quality / 100));
@@ -244,9 +249,9 @@ namespace GameServices.Economy
             if (random.Percentage(scaleFromSkill(20)))
                 yield return CommonProduct.Create(_factory.CreateFuelItem(), 10 + random.Next2(60 * quality / 100));
 
-            yield return CommonProduct.Create(_factory.CreateResearchItem(faction), scaleFromSkill(2 + random.Next(10)));
+            yield return CommonProduct.Create(_factory.CreateResearchItem(faction), scaleFromSkill(random.Next(2, 10 + level / 15)));
 
-            for (var i = 0; i < random.Next(quality / 50); ++i)
+            for (var i = 0; i < random.Next(1, quality / 50); ++i)
                 if (TryCreateRandomComponent(level, faction, random, true, ComponentQuality.P3, out var itemType))
                     yield return CommonProduct.Create(itemType);
         }

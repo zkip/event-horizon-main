@@ -12,6 +12,7 @@ using GameStateMachine.States;
 using Session;
 using System.Collections.Generic;
 using Zenject;
+using static Combat.Domain.CombatModel;
 
 namespace Galaxy.StarContent
 {
@@ -66,7 +67,10 @@ namespace Galaxy.StarContent
                 builder.AddPlayerSkillLevelReward(3);
             }
 
-            _startBattleTrigger.Fire(builder.Build(), result => OnCombatCompleted(starId));
+            var combatModel = (CombatModel)builder.Build();
+            combatModel.SetRewardsCondition((CombatModel combatModel, AvailableExtraLootType availableExtraType) => combatModel.IsVictory());
+
+            _startBattleTrigger.Fire(combatModel, result => OnCombatCompleted(starId));
 
             _session.CommonObjects.SetUseTime(starId, System.DateTime.UtcNow.Ticks);
         }

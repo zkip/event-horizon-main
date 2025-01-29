@@ -19,6 +19,7 @@ using Session;
 using UnityEngine;
 using Zenject;
 using GameServices.Player;
+using static Combat.Domain.CombatModel;
 
 namespace Galaxy.StarContent
 {
@@ -98,7 +99,10 @@ namespace Galaxy.StarContent
                 builder.AddPlayerSkillLevelReward(step + 1 < MaxLevel ? 1 : 2);
             }
 
-            _startBattleTrigger.Fire(builder.Build(), result => OnCombatCompleted(starId, result));
+            var combatModel = (CombatModel)builder.Build();
+            combatModel.SetRewardsCondition((CombatModel combatModel, AvailableExtraLootType availableExtraType) => combatModel.IsVictory());
+
+            _startBattleTrigger.Fire(combatModel, result => OnCombatCompleted(starId, result));
         }
 
         private IEnumerable<IProduct> GetReward(int starId)
