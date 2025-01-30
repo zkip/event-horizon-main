@@ -45,10 +45,12 @@ namespace Constructor
             _level = 0;
         }
 
-        public static bool TryCreateRandomComponent(IDatabase database, Faction faction, System.Random random, bool allowRare, ModificationQuality? modificationQuality, out ComponentInfo componentInfo)
+        public static bool TryCreateRandomComponentAny(IDatabase database, List<Faction> targetFactions, bool excludeMode, System.Random random, ModificationQuality? modificationQuality, out ComponentInfo componentInfo)
         {
-            var components = allowRare ? database.ComponentList.CommonAndRare() : database.ComponentList.Common();
-            if (faction != null) components = components.FilterByFactionOrEmpty(faction);
+            var components = database.ComponentList.Available();
+            if (targetFactions != null && targetFactions.Count > 0)
+                components = components.Where(component => targetFactions.Contains(component.Faction) == !excludeMode);
+
             var component = components.RandomElement(random);
             if (component == null)
             {

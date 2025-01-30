@@ -113,24 +113,26 @@ namespace Galaxy.StarContent
 
             var random = _random.CreateRandom(starId + 98765);
             var componentSeed = starId + step + 3456;
+            var targetFactions = new List<Faction> { faction };
             if (step + 1 < MaxLevel)
             {
-                if (_lootGenerator.TryGetRandomComponent(starId + step + 3456, true, faction, ModificationQuality.P3, out var factionProduct))
+                if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, false, ModificationQuality.P3, out var factionProduct))
                     yield return factionProduct;
 
-                if (_lootGenerator.TryGetRandomComponent(componentSeed, true, null, ModificationQuality.P3, out var otherFactionProduct))
+                if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, true, ModificationQuality.P3, out var otherFactionProduct))
                     yield return otherFactionProduct;
 
-                yield return Price.Premium(10 + random.Next(1, 10)).GetProduct(_itemTypeFactory);
+                yield return Price.Premium(10 + random.Next(1 + step * 2, 10 + step * 5)).GetProduct(_itemTypeFactory);
             }
             else
             {
                 for(var i = 0; i < 1 + level / 50; i++)
                 {
-                    if (_lootGenerator.TryGetRandomComponent(componentSeed + i, true, faction, ModificationQuality.P3, out var factionExtraProduct))
-                        yield return factionExtraProduct;
-                    if (_lootGenerator.TryGetRandomComponent(componentSeed + i, true, null, ModificationQuality.P3, out var otherFactionExtraProduct))
-                        yield return otherFactionExtraProduct;
+                    if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, false, ModificationQuality.P3, out var factionProduct))
+                        yield return factionProduct;
+
+                    if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, true, ModificationQuality.P3, out var otherFactionProduct))
+                        yield return otherFactionProduct;
                 }
                 yield return Price.Premium(100 + random.Next(10, 100)).GetProduct(_itemTypeFactory);
             }

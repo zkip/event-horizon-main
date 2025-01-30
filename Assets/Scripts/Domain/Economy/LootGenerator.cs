@@ -211,7 +211,6 @@ namespace GameServices.Economy
         public IEnumerable<IProduct> GetContainerLoot(Faction faction, int level, int seed)
         {
             var random = new System.Random(seed);
-            var ratio = _playerSkills.PlanetaryScanner;
             var quality = Mathf.RoundToInt(_playerSkills.PlanetaryScanner * 100);
             var additionP3Modification = quality >= 1.0 ? 1 : 0;
 
@@ -231,8 +230,30 @@ namespace GameServices.Economy
                     yield return CommonProduct.Create(itemType);
 
             for (var i = 0; i < random.Next(1, quality / 75) + additionP3Modification; ++i)
-                if (TryGetRandomComponent(seed + 77394 + i, true, null, ModificationQuality.P3, out var component))
+            {
+                if (TryGetRandomComponent(seed + 77394 + i, null, false, ModificationQuality.P3, out var component))
                     yield return component;
+            }
+        }
+
+        /** 
+         Value: T0 | T1 | T2 |...
+         Rate :    0    1    2...progressiveToAverage
+        */
+        private T randPickInListProgressive<T>(List<T> list, List<int> startSec, List<int> finalSec, float progress, System.Random random)
+        {
+            if (list.Count - 1 != startSec.Count) throw new System.ArgumentException("must be: rateTable.Count == list.Count - 1.");
+
+            startSec.Sort();
+
+            if (list.Count < 2) return list.First();
+
+            var result = random.Next(100);
+            var step = 0;
+            for (var i = 0; i < startSec.Count; i++)
+                if (result > Mathf.FloorToInt(Mathf.Lerp(startSec[i], finalSec[i], progress))) step++;
+
+            return list[step];
         }
 
         public IEnumerable<IProduct> GetShipWreckLoot(Faction faction, int level, int seed)
@@ -251,9 +272,27 @@ namespace GameServices.Economy
 
             yield return CommonProduct.Create(_factory.CreateResearchItem(faction), scaleFromSkill(random.Next(2, 10 + level / 15)));
 
+            var maxGrowthLevel = 350;
+            var progress = Mathf.Min(1f, (float)level / maxGrowthLevel);
+            var startSec = new List<int> { 25, 50, 70, 85, 95 };
+            var finalSec = new List<int> { 16, 32, 48, 64, 80 };
+            List<ModificationQuality> allModificationQualities = new List<ModificationQuality> {
+                ModificationQuality.N3,
+                ModificationQuality.N2,
+                ModificationQuality.N1,
+                ModificationQuality.P1,
+                ModificationQuality.P2,
+                ModificationQuality.P3,
+            };
+
             for (var i = 0; i < random.Next(1, quality / 50); ++i)
-                if (TryCreateRandomComponent(level, faction, random, true, ComponentQuality.P3, out var itemType))
-                    yield return CommonProduct.Create(itemType);
+            {
+                var modificationQuality = randPickInListProgressive(allModificationQualities, startSec, finalSec, progress, random);
+                if (TryGetRandomComponent(seed + 77394 + i, new List<Faction> { faction }, false, modificationQuality, out var component))
+                    yield return component;
+                else
+                    yield return CommonProduct.Create(_factory.CreateResearchItem(faction), scaleFromSkill(random.Next(2, 4 + level / 50)));
+            }
         }
 
         public IEnumerable<IProduct> GetStarBaseSpecialReward(Region region)
@@ -380,10 +419,10 @@ namespace GameServices.Economy
             }
         }
 
-        public bool TryGetRandomComponent(int seed, bool allowRare, Faction faction, ModificationQuality modificationQuality, out IProduct product)
+        public bool TryGetRandomComponent(int seed, List<Faction > targetFactions, bool excludeMode, ModificationQuality modificationQuality, out IProduct product)
         {
             var random = _random.CreateRandom(seed);
-            if (!ComponentInfo.TryCreateRandomComponent(_database, faction, random, allowRare, modificationQuality, out var componentInfo))
+            if (!ComponentInfo.TryCreateRandomComponentAny(_database, targetFactions, excludeMode, random, modificationQuality, out var componentInfo))
             {
                 product = null;
                 return false;

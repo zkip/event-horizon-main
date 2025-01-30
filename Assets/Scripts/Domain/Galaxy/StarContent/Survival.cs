@@ -86,8 +86,8 @@ namespace Galaxy.StarContent
 
             for (var i = 0; i < 6 + rewardLevel; i++)
             {
-                if (_lootGenerator.TryGetRandomComponent(componentSeed + i, true, null, ModificationQuality.P3, out var otherFactionExtraProduct))
-                    yield return otherFactionExtraProduct;
+                if (_lootGenerator.TryGetRandomComponent(componentSeed + i, null, false, ModificationQuality.P3, out var otherFactionProduct))
+                    yield return otherFactionProduct;
             }
 
             yield return Price.Premium(100 + random.Next(10, 100) * rewardLevel).GetProduct(_itemTypeFactory);
