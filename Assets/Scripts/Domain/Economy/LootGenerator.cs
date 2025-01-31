@@ -351,7 +351,7 @@ namespace GameServices.Economy
         {
             var random = _random.CreateRandom(seed);
 
-            yield return Price.Common(500 * Maths.Distance.Credits(level)).GetProduct(_factory);
+            yield return Price.Common(5000 * Maths.Distance.Credits(level)).GetProduct(_factory);
             yield return CommonProduct.Create(_factory.CreateFuelItem(), random.Next(5,15));
 
             if (random.Next(3) == 0)
