@@ -18,6 +18,8 @@ using Model.Factories;
 using Session;
 using UnityEngine;
 using Zenject;
+using GameServices.Player;
+using static Combat.Domain.CombatModel;
 
 namespace Galaxy.StarContent
 {
@@ -32,6 +34,7 @@ namespace Galaxy.StarContent
         [Inject] private readonly LootGenerator _lootGenerator;
         [Inject] private readonly IDatabase _database;
         [Inject] private readonly CombatModelBuilder.Factory _combatModelBuilderFactory;
+        [Inject] private readonly PlayerSkills _playerSkills;
 
         public bool IsCompleted(int starId) { return GetCurrentLevel(starId) >= MaxLevel; }
         public int GetCurrentLevel(int starId) { return _session.CommonObjects.GetIntValue(starId); }
@@ -90,22 +93,49 @@ namespace Galaxy.StarContent
             builder.Rules = _database.GalaxySettings.ChallengeCombatRules ?? _database.CombatSettings.DefaultCombatRules;
             builder.AddSpecialReward(GetReward(starId));
 
-            _startBattleTrigger.Fire(builder.Build(), result => OnCombatCompleted(starId, result));
+            if(_playerSkills.Experience.Level < level)
+            {
+                var step = GetCurrentLevel(starId);
+                builder.AddPlayerSkillLevelReward(step + 1 < MaxLevel ? 1 : 2);
+            }
+
+            var combatModel = (CombatModel)builder.Build();
+            combatModel.SetRewardsCondition((CombatModel combatModel, AvailableExtraLootType availableExtraType) => combatModel.IsVictory());
+
+            _startBattleTrigger.Fire(combatModel, result => OnCombatCompleted(starId, result));
         }
 
         private IEnumerable<IProduct> GetReward(int starId)
         {
             var step = GetCurrentLevel(starId);
             var level = _starData.GetLevel(starId);
-
-            if (_lootGenerator.TryGetRandomComponent(level + (step + 1) * 10, starId + step + 3456, false, out var product))
-                yield return product;
-
-            if (step + 1 < MaxLevel)
-                yield break;
+            var faction = _starData.GetRegion(starId).Faction;
 
             var random = _random.CreateRandom(starId + 98765);
-            yield return Price.Premium(random.Next(1, 4)).GetProduct(_itemTypeFactory);
+            var componentSeed = starId + step + 3456;
+            var targetFactions = new List<Faction> { faction };
+            if (step + 1 < MaxLevel)
+            {
+                if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, false, ModificationQuality.P3, out var factionProduct))
+                    yield return factionProduct;
+
+                if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, true, ModificationQuality.P3, out var otherFactionProduct))
+                    yield return otherFactionProduct;
+
+                yield return Price.Premium(10 + random.Next(1 + step * 2, 10 + step * 5)).GetProduct(_itemTypeFactory);
+            }
+            else
+            {
+                for(var i = 0; i < 1 + level / 50; i++)
+                {
+                    if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, false, ModificationQuality.P3, out var factionProduct))
+                        yield return factionProduct;
+
+                    if (_lootGenerator.TryGetRandomComponent(componentSeed, targetFactions, true, ModificationQuality.P3, out var otherFactionProduct))
+                        yield return otherFactionProduct;
+                }
+                yield return Price.Premium(100 + random.Next(10, 100)).GetProduct(_itemTypeFactory);
+            }
         }
 
         private void OnCombatCompleted(int starId, ICombatModel result)

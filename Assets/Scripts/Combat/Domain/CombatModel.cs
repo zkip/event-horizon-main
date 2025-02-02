@@ -18,6 +18,14 @@ namespace Combat.Domain
         private readonly FleetModel _enemyFleet;
         private long _totalExperience;
 
+        public enum AvailableExtraLootType
+        {
+            Any,
+            SpecialRewards,
+            ExtraExperiences,
+            All,
+        }
+
         public CombatModel(
             FleetModel playerFleet, 
             FleetModel enemyFleet,
@@ -42,6 +50,25 @@ namespace Combat.Domain
 
         public IEnumerable<KeyValuePair<IShip, long>> PlayerExperience { get { return _playerExperienceData; } }
         public IEnumerable<IProduct> SpecialRewards { get; set; }
+        public IEnumerable<long> ExtraExperiences { get; set; }
+
+        private LootRewardsCondition _lootRewardsCondition;
+
+        public void SetRewardsCondition(LootRewardsCondition condition) {
+            _lootRewardsCondition = condition;
+        }
+
+        public bool IsAvailableLootSpecialRewards() {
+            if (_lootRewardsCondition == null) return true;
+            return _lootRewardsCondition(this, AvailableExtraLootType.SpecialRewards);
+        }
+        public bool IsAvailableLootExtraExperiences()
+        {
+            if (_lootRewardsCondition == null) return true;
+            return _lootRewardsCondition(this, AvailableExtraLootType.ExtraExperiences);
+        }
+
+        public delegate bool LootRewardsCondition(CombatModel combatModel, AvailableExtraLootType availableExtraType);
 
         private void OnShipDestroyed(Component.Ship.IShip ship)
         {

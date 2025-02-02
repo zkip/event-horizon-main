@@ -210,7 +210,7 @@ namespace Game.Exploration
                 case ObjectiveType.Container:
                     return _lootGenerator.GetContainerLoot(_planet.Faction, _planet.Level, objective.Seed);
                 case ObjectiveType.ShipWreck:
-                    return _lootGenerator.GetShipWreckLoot(_planet.Faction, _planet.Level, objective.Seed);
+                    return _lootGenerator.GetShipWreckLoot(GetShipWreck(objective.Seed).Faction, _planet.Level, objective.Seed);
                 case ObjectiveType.Outpost:
                     return _lootGenerator.GetOutpostLoot(_planet.Faction, _planet.Level, objective.Seed);
                 case ObjectiveType.Hive:

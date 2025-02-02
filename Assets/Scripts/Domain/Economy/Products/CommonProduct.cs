@@ -1,6 +1,7 @@
 ﻿using Economy.ItemType;
 using GameServices.Player;
 using Session;
+using UnityEngine;
 
 namespace Economy.Products
 {
@@ -111,10 +112,16 @@ namespace Economy.Products
         private readonly PlayerResources _playerResources;
         private readonly Price _price;
 
-        public PlayerInventoryPriceProvider(PlayerResources playerResources, IItemType itemType, int inversedPriceScale)
+        public PlayerInventoryPriceProvider(PlayerResources playerResources, PlayerSkills playerSkills, IItemType itemType, int inversedPriceScale)
         {
             _playerResources = playerResources;
             _price = itemType.Price / inversedPriceScale;
+
+            if (playerSkills.HasMasterTrader && itemType is StarsItem)
+                _price = itemType.Price;
+
+            var priceScale = 2f - Mathf.Max(0.7f, playerSkills.PriceScale);
+            _price *= priceScale;
         }
 
         public Price Price => _price;

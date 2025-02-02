@@ -45,6 +45,30 @@ namespace Constructor
             _level = 0;
         }
 
+        public static bool TryCreateRandomComponentAny(IDatabase database, List<Faction> targetFactions, bool excludeMode, System.Random random, ModificationQuality? modificationQuality, out ComponentInfo componentInfo)
+        {
+            var components = database.ComponentList.Available();
+            if (targetFactions != null && targetFactions.Count > 0)
+                components = components.Where(component => targetFactions.Contains(component.Faction) == !excludeMode);
+
+            var component = components.RandomElement(random);
+            if (component == null)
+            {
+                componentInfo = Empty;
+                return false;
+            }
+
+            if (modificationQuality == null)
+            {
+                componentInfo = new ComponentInfo(component);
+                return true;
+            }
+
+            var modification = component.PossibleModifications.RandomElement(random);
+            componentInfo = new ComponentInfo(component, modification, (ModificationQuality)modificationQuality);
+            return true;
+        }
+
         public static bool TryCreateRandomComponent(IDatabase database, int level, Faction faction, System.Random random, bool allowRare, 
             ComponentQuality maxQuality, out ComponentInfo componentInfo)
         {

@@ -311,7 +311,7 @@ namespace Combat.Manager
                         throw new ArgumentException();
                 }
 
-                _radarPanel.AddBeacon(unit);
+                _radarPanel.AddBeacon(unit, objective);
                 _sceneObjects.Add(unit);
                 _objectives.Add(i, unit);
             }
