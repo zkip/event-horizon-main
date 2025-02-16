@@ -37,6 +37,9 @@ namespace Combat.Domain
             _shipDestroyedSignal.Event += OnShipDestroyed;
         }
 
+        // TODO: tmp handle
+        public bool AllowedProgressiveLoots = false;
+
         public CombatRulesAdapter Rules { get; set; }
 
         public IReward GetReward(LootGenerator lootGenerator, PlayerSkills playerSkills, Galaxy.Star currentStar)

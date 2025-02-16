@@ -45,6 +45,53 @@ namespace Constructor
             _level = 0;
         }
 
+        public static ComponentInfo SetModificationLevel(ComponentInfo info, int qualityLevel, System.Random random)
+        {
+            if (info.Data.PossibleModifications.Count == 0) return info;
+
+            int quality = (int)MathF.Min(MathF.Max((int)ModificationQuality.N3, qualityLevel), (int)ModificationQuality.P3);
+            var modification = info.ModificationType == ComponentMod.Empty ? info.Data.PossibleModifications.RandomElement(random) : info.ModificationType;
+
+            return new ComponentInfo(info.Data, modification, (ModificationQuality)quality, info.Level);
+        }
+
+        public static ComponentInfo UpgradeThenRandomModification(ComponentInfo info, int seed) {
+            var random = new System.Random(seed);
+            var quality = (int)info._quality;
+            if (quality >= (int)ModificationQuality.P3) return info;
+            var newModification = info.Data.PossibleModifications.RandomElement(random);
+            return new ComponentInfo(info.Data, newModification, (ModificationQuality)(quality+1), info.Level);
+        }
+
+        public static ComponentInfo RandomModifications(ComponentInfo info, int seed, bool mustChange = false)
+        {
+            ComponentInfo componentInfo;
+            var tryCount = 0;
+            do
+            {
+                var random = new System.Random(seed + tryCount++);
+                var newModification = info.Data.PossibleModifications.RandomElement(random);
+                componentInfo = new ComponentInfo(info.Data, newModification, info._quality, info.Level);
+            } while (mustChange && componentInfo == info);
+
+            return componentInfo;
+        }
+
+        public static ComponentInfo RandomQualityAndModifications(ComponentInfo info, int seed, bool mustChange = false)
+        {
+            ComponentInfo componentInfo;
+            var tryCount = 0;
+            do
+            {
+                var random = new System.Random(seed + tryCount++);
+                var quality = (ModificationQuality)random.SquareRange((int)ModificationQuality.N3, (int)ModificationQuality.P3);
+                var newModification = info.Data.PossibleModifications.RandomElement(random);
+                componentInfo =  new ComponentInfo(info.Data, newModification, quality, info.Level);
+            } while (mustChange && componentInfo == info);
+
+            return componentInfo;
+        }
+
         public static bool TryCreateRandomComponentAny(IDatabase database, List<Faction> targetFactions, bool excludeMode, System.Random random, ModificationQuality? modificationQuality, out ComponentInfo componentInfo)
         {
             var components = database.ComponentList.Available();

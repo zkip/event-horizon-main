@@ -42,5 +42,12 @@ namespace GameDatabase.Extensions
             if (level < 0) level = 0;
             return components.Where(item => item.Level <= level);
         }
+
+        public static IEnumerable<Component> LevelInRange(this IEnumerable<Component> components, int minLevel, int maxLevel)
+        {
+            var min = UnityEngine.Mathf.Min(minLevel, maxLevel);
+            var max = UnityEngine.Mathf.Max(minLevel, maxLevel);
+            return components.Where(item => item.Level > min && item.Level <= max);
+        }
     }
 }

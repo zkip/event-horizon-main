@@ -43,6 +43,7 @@ namespace Installers
 			};
 
             var areaSize = _combatModel.Rules.BattleMapSize;
+            if(areaSize == 200) areaSize = 300;
 
             Container.BindInterfacesTo<Messenger>().AsSingle().WithArguments(GameScene.Combat);
 

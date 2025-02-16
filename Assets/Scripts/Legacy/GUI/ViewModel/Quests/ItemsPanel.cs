@@ -39,9 +39,10 @@ namespace ViewModel
 				    var experience = reward.Experience.Where(item => item.ExperienceBefore < _playerSkills.MaxShipExperience);
                     LayoutGroup.transform.InitializeElements<Common.ShipExperienceItem, GameModel.ExperienceData>(experience, UpdateExperience, _factory);
 					DescriptionText.text = string.Empty;
-					ScrollRect.content.anchoredPosition = Vector2.zero;
+                    ScrollRect.content.anchoredPosition = Vector2.zero;
                     PlayerExperience.Initialize(reward.PlayerExperience);
-                }
+					LayoutRebuilder.ForceRebuildLayoutImmediate(ScrollRect.GetComponent<RectTransform>());
+				}
 				else
 				{
 					gameObject.SetActive(false);

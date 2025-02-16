@@ -37,6 +37,7 @@ namespace Galaxy.StarContent
             return _session.CommonObjects.GetUseTime(starId);
         }
 
+        // public long CooldownTime { get { return 0; } }
         public long CooldownTime { get { return System.TimeSpan.TicksPerHour*4; } }
 
         public Model.Military.IFleet CreateFleet(int starId)
@@ -68,6 +69,8 @@ namespace Galaxy.StarContent
             }
 
             var combatModel = (CombatModel)builder.Build();
+            // TODO: tmp handle
+            combatModel.AllowedProgressiveLoots = true;
             combatModel.SetRewardsCondition((CombatModel combatModel, AvailableExtraLootType availableExtraType) => combatModel.IsVictory());
 
             _startBattleTrigger.Fire(combatModel, result => OnCombatCompleted(starId));

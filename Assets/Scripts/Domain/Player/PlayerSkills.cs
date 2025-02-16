@@ -183,6 +183,7 @@ namespace GameServices.Player
             if (_skillLevels == null)
             {
                 _skillLevels = Enum.GetValues(typeof(SkillType)).OfType<SkillType>().ToDictionary(item => item, item => 0);
+                _skillLevelMap = Enum.GetValues(typeof(SkillType)).OfType<SkillType>().ToDictionary(item => item, item => 0);
                 foreach (var id in _session.Upgrades.Skills)
                 {
                     var info = _skills[id];
@@ -193,6 +194,7 @@ namespace GameServices.Player
                         continue;
 
                     _skillLevels[info.Type] += info.Multilpler;
+                    _skillLevelMap[info.Type] ++;
                     _pointsSpent++;
                 }
 
@@ -201,8 +203,14 @@ namespace GameServices.Player
 
             return _skillLevels;
         }
+        public int GetSkillLevel(SkillType skillType)
+        {
+            if (_skillLevelMap==null) GetSkillLevels();
+            return _skillLevelMap[skillType];
+        }
 
         private Dictionary<SkillType, int> _skillLevels;
+        private Dictionary<SkillType, int> _skillLevelMap;
         private Experience _experience = 0;
         private int _pointsSpent = 0;
         private readonly Skills _skills;

@@ -26,6 +26,8 @@ namespace Gui.Combat
         [SerializeField] public Image Image;
         [SerializeField] public Image Background;
         [SerializeField] public Color StarbaseColor;
+        [SerializeField] public Color ContainerColor;
+        [SerializeField] public Color ShipWreckColor;
         [SerializeField] private float Size = 24;
         
         private ObjectiveInfo _objectiveInfo;
@@ -111,9 +113,12 @@ namespace Gui.Combat
             RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Size * 2);
 
             Image.sprite = resourceLocator.GetSprite(ObjectiveIconDict[_objectiveInfo.Type]);
-            if (_objectiveInfo.Type == ObjectiveType.Outpost)
+            switch (_objectiveInfo.Type)
             {
-                Background.color = StarbaseColor;
+                case ObjectiveType.Hive:
+                case ObjectiveType.Outpost: Background.color = StarbaseColor; break;
+                case ObjectiveType.Container: Background.color = ContainerColor; break;
+                case ObjectiveType.ShipWreck: Background.color = ShipWreckColor; break;
             }
 
         }

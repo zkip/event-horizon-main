@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.brunomikoski.scenekeeper": {
+      "version": "https://github.com/brunomikoski/SceneKeeper.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d168463017337b0464ac474a2cb8ccfa570a3a2d"
+    },
     "com.google.external-dependency-manager": {
       "version": "1.2.183",
       "depth": 0,

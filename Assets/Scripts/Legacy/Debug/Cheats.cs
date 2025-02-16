@@ -82,14 +82,14 @@ public class Cheats
       //      _playerResources.Money += 200000;
       //      _playerResources.Stars += 50;
 
-		    foreach (var faction in _database.FactionsWithEmpty.WithTechTree())
-			    _research.AddResearchPoints(faction, 50);
+		    //foreach (var faction in _database.FactionsWithEmpty.WithTechTree())
+			   // _research.AddResearchPoints(faction, 50);
 
-		    _playerSkills.Experience = GameModel.Skills.Experience.FromLevel(_playerSkills.Experience.Level + 50);
+		    //_playerSkills.Experience = GameModel.Skills.Experience.FromLevel(_playerSkills.Experience.Level + 50);
         }
         else if (command == "345")
         {
-            _playerResources.Tokens += 1000;
+            //_playerResources.Tokens += 1000;
         }
 		else if (command == "000")
 		{
@@ -166,19 +166,19 @@ public class Cheats
                 item.SetVisited();
             break;
 		case 2:
-		    foreach (var item in _database.QuestItemList.Where(item => item.Price > 0))
-		        _playerResources.AddResource(item.Id, 100000);
+		    //foreach (var item in _database.QuestItemList.Where(item => item.Price > 0))
+		    //    _playerResources.AddResource(item.Id, 100000);
 			break;
 		case 3:
-			if (_session.Resources.Stars < 0)
-                _session.Resources.Stars += 100;
+			//if (_session.Resources.Stars < 0)
+   //             _session.Resources.Stars += 100;
 			break;
 		case 4:
-		    _playerSkills.Experience = GameModel.Skills.Experience.FromLevel(_playerSkills.Experience.Level + 20);
+		    //_playerSkills.Experience = GameModel.Skills.Experience.FromLevel(_playerSkills.Experience.Level + 20);
 			break;
 		case 20:
-		    foreach (var item in _database.QuestItemList.Where(item => item.Price == 0))
-		        _playerResources.AddResource(item.Id, 1);
+		    //foreach (var item in _database.QuestItemList.Where(item => item.Price == 0))
+		    //    _playerResources.AddResource(item.Id, 1);
 			break;
 		case 19:
             foreach (var item in _database.ComponentList.Common())
@@ -200,12 +200,12 @@ public class Cheats
                 _playerFleet.Ships.Add(new CommonShip(ship, _database));
 			break;
 		case 9:
-			foreach (var ship in _playerFleet.ActiveShipGroup.Ships)
-				ship.SetLevel(ship.Experience.Level + 10);
+			//foreach (var ship in _playerFleet.ActiveShipGroup.Ships)
+			//	ship.SetLevel(ship.Experience.Level + 10);
 			break;
 		case 10:
-		    foreach (var faction in _database.FactionsWithEmpty.WithTechTree())
-				_research.AddResearchPoints(faction, 100);
+		  //  foreach (var faction in _database.FactionsWithEmpty.WithTechTree())
+				//_research.AddResearchPoints(faction, 100);
 			break;
 		case 11:
 			_session.Game.Regenerate();
@@ -215,14 +215,14 @@ public class Cheats
             _sesionCreatedTrigger.Fire();
 			break;
 		case 12:
-		    _playerResources.Stars += 100000000;
+		    //_playerResources.Stars += 100000000;
 			break;
 		case 13:
-			foreach (var ship in _playerFleet.ActiveShipGroup.Ships)
-				ship.SetLevel(100);
+			//foreach (var ship in _playerFleet.ActiveShipGroup.Ships)
+			//	ship.SetLevel(100);
 			break;
 		case 14:
-			_playerResources.Money += 1000000;
+			//_playerResources.Money += 1000000;
 			break;
 		case 15:
 			_playerResources.Fuel += 1000;

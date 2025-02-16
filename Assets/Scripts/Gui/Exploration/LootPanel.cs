@@ -24,6 +24,7 @@ namespace Gui.Exploration
 
             var items = args.Get<IEnumerable<IProduct>>();
             _layout.transform.InitializeElements<LootPanelItem, IProduct>(items, UpdateItem);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_layout.GetComponent<RectTransform>());
         }
 
         private void Update()

@@ -96,7 +96,8 @@ namespace Gui.StarMap
             var shipLevel = ship.Experience.Level;
             var scaleLevel = shipLevel / 5;
             var scalar = shipLevel < 100 ? 1.15 : 1.5;
-            var price = 10000 + 10000 * size * scalar * scaleLevel;
+            var startPrice = 10000 + size * 800;
+            var price = startPrice + 125 * size * scalar * scaleLevel;
 
             return Price.Common(price);
         }

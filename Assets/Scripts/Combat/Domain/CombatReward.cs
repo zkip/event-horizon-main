@@ -13,7 +13,8 @@ namespace Combat.Domain
     {
         public CombatReward(CombatModel combatModel, PlayerSkills playerSkills, LootGenerator lootGenerator, Galaxy.Star currentStar)
         {
-            if (combatModel.IsLootAllowed())
+            // TODO: tmp handle
+            if (combatModel.IsLootAllowed() || combatModel.AllowedProgressiveLoots)
             {
                 foreach (var item in CreateItems(combatModel, lootGenerator, currentStar))
                 {

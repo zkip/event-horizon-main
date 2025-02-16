@@ -18,11 +18,11 @@ namespace Economy
 
         public static Price Premium(Money amount)
         {
-#if IAP_DISABLED
-            return new Price(amount*30000, Currency.Credits);
-#else
+//#if IAP_DISABLED
+            //return new Price(amount*30000, Currency.Credits);
+//#else
             return new Price(amount, Currency.Stars);
-#endif
+//#endif
         }
 
         public static Price Tokens(Money amount)

@@ -36,7 +36,8 @@ namespace ViewModel
 	    [SerializeField] private GameObject ReputationPanel;
         [SerializeField] private GameObject ShopButton;
 	    [SerializeField] private GameObject CraftButton;
-	    [SerializeField] private GameObject ShipyardButton;
+	    [SerializeField] private GameObject ReforgeButton;
+		[SerializeField] private GameObject ShipyardButton;
 	    [SerializeField] private GameObject MissionButton;
 	    [SerializeField] private Text FactionName;
 	    [SerializeField] private Text PowerText;
@@ -86,7 +87,8 @@ namespace ViewModel
 		        ReputationPanel.gameObject.SetActive(false);
 		        ShopButton.SetActive(true);
 		        CraftButton.SetActive(true);
-		        ShipyardButton.SetActive(true);
+				ReforgeButton.SetActive(true);
+				ShipyardButton.SetActive(true);
 		        MissionButton.gameObject.SetActive(false);
                 return;
 		    }
@@ -102,7 +104,8 @@ namespace ViewModel
 
 			ShopButton.SetActive(reputation >= 5);
 			CraftButton.SetActive(reputation >= 60);
-            ShipyardButton.SetActive(reputation >= 90);
+			ReforgeButton.SetActive(reputation >= 70);
+			ShipyardButton.SetActive(reputation >= 90);
 		}
 	}
 }
