@@ -107,9 +107,12 @@ namespace Installers
             Container.BindInterfacesTo<MacLocalStorage>().AsSingle();
 #elif UNITY_STANDALONE_WIN
             Container.BindInterfacesTo<WindowsLocalStorage>().AsSingle();
+#elif UNITY_EDITOR
+            Container.BindInterfacesTo<ExportableLocalStorage>().AsSingle();
 #else
-			Container.BindInterfacesTo<LocalStorage>().AsSingle();
+            Container.BindInterfacesTo<LocalStorage>().AsSingle();
 #endif
+            Container.Bind<ISavegameExporter>().To<SaveGameExporterStub>().AsSingle().IfNotBound();
 
 #if LICENSE_OPENSOURCE
             Container.BindInterfacesTo<EmptyCloudStorage>().AsSingle();
@@ -119,7 +122,7 @@ namespace Installers
 #elif UNITY_IPHONE && !UNITY_EDITOR
             Container.BindInterfacesTo<AppleCloudStorage>().AsSingle();
 #else
-			Container.BindInterfacesTo<EmptyCloudStorage>().AsSingle();
+            Container.BindInterfacesTo<EmptyCloudStorage>().AsSingle();
 #endif
 
 #if ADS_DISABLED || LICENSE_OPENSOURCE
